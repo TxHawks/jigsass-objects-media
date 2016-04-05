@@ -1,0 +1,901 @@
+// *************************************
+//
+// # jigsass-objects-media
+// -> A flexbox enabled version of
+//    @Stubbornella's media object
+//
+// *************************************
+
+@charset 'UTF-8';
+
+// -------------------------------------
+// Dependencies
+// -------------------------------------
+
+@if (not mixin-exists(jigsass-define-object)) {
+  @error '`jigsass-objects-media` has a dependency on `jigsass-tools-selectors`.
+    Please import it.';
+}
+
+
+
+
+
+// -------------------------------------
+// Introduction
+// -------------------------------------
+
+// stylelint-disable
+/* ---
+section: Media object
+title: Introduction
+order: -10
+---
+
+[![NPM version][npm-image]][npm-url]
+[![Dependency Status][daviddm-image]][daviddm-url]
+
+A flexbox enabled version of @Stubbornella's media object
+
+The [media object](http://bit.ly/Ku2rqE), introduced by Nichole Sullivan, is a
+layout abstraction for placing fixed width content and fluid content side by side.
+
+JigSass Media is a flexbox enabled implementation of the orginal, with optional fallback
+(See [Configuration](#configutation)).
+
+## Installation
+
+Using npm:
+
+```sh
+npm i -S jigsass-objects-media
+```
+
+## Usage
+First, you need to import JigSass Objects Media:
+
+```scss
+@import 'path/to/jigsass-objects-media/scss/index';
+```
+
+And optionally [reconfigure](#configuration) the defaults to your liking.
+
+Like all other JigSass modules, JigSass Media does not automatically generate any CSS when imported.
+In order to use its classes, you would have to first explicitly indicate your intention to use
+them, using the [jigsass-media-obj](https://txhawks.github.io/jigsass-objects-media/#media-obj-mixin)
+mixin. This way our css remains small and maintainable:
+
+```scss
+@include jigsass-media-obj([$modifier, $from-brekpoint, $until-breakpoint, $misc-breakpoint]);
+```
+
+All JigSass Media classes are responsive-enabled, using
+[JigSass MQ](https://txhawks.github.io/jigsass-tools-mq/) and the breakpoints defined in the
+[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)
+variable.
+
+Based on the arguments passed to the jigsass-media-obj mixin, responsive modifiers are
+generated according to the following logic:
+
+```scss
+.o-media--modifier[-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
+```
+
+So, assuming the `medium`, `large` and `landscape` breakpoints are defined in `$jigsass-breakpoints`
+as `600px`, `1024px` and `(orientation: landscape)` respectively,
+
+```scss
+@include jigsass-media-obj($modifier: bottom);
+```
+will generate the `.o-media--bottom` class, which is not limited to any media-query.
+
+```scss
+@include jigsass-media-obj( $modifier: bottom, $until: medium);
+```
+
+will generate the `.o-media--bottom--until-medium` class, which will be in effect at
+`(max-width: 37.49em)` and will override styles in the default class until that point.
+
+```scss
+@include jigsass-media-obj $modifier: bottom, $from: large, $misc: landscape);
+```
+
+will generate the `.o-media--bottom--from-large-when-landscape` class, which will go into
+effect at `(min-width: 64em) and (orientation: landscape)` and will override styles in the default
+class under these  conditions.
+
+Regardless of how many times a class is included, or where, it will only be generated once,
+where the `jigsass-objects-media` partial was imported, leaving us with a css file as small
+as possible, and a predictable cascade.
+
+-----
+
+At its simplest form, the media object is simply a fixed element next to a fluid element,
+filling up available space:
+
+```example:html
+<div class='u-cf o-media'>
+  <figure class='o-media__fig'>
+    <div class='[ fpo fpo--b fpo--fig ]'></div>
+  </figure>
+  <div class='o-media__content fpo'>
+    <p style='text-align: center'<strong>.o-media__content</strong></p>
+  </div>
+</div>
+```
+
+Like all JigSass object,  JigSass Media is responsive-enabled, and an instance
+may be set to stack vertically by using responsive modifier classes on the container
+(resize window to see object stacking and unstacking):
+
+```example:html
+<div class='u-cf [ o-media--from-small-until-medium o-media--from-large ]'>
+  <figure class='o-media__fig'>
+    <div class='[ fpo fpo--b fpo--fig ]'></div>
+  </figure>
+  <div class='o-media__content fpo'>
+    <p style='text-align: center'>
+      <strong>Media object only from small until medium and  from large on.</strong>
+    </p>
+  </div>
+</div>
+```
+
+One of the media object's key features, is that it can be endlessly nested:
+
+```example:html
+<! -- First level -->
+<div class='u-cf o-media'>
+  <figure class='o-media__fig'>
+    <div class='[ fpo fpo--b fpo--fig ]'></div>
+  </figure>
+  <div class='o-media__content fpo'>
+    <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</span>
+
+    <! -- Second level -->
+    <div class='u-cf o-media--from-medium'>
+      <figure class='o-media__fig'><div class='[ fpo fpo--b fpo--fig ]'></div></figure>
+      <div class='o-media__content fpo fpo--c'>
+        <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim venia.</span>
+
+        <! -- Third level -->
+        <div class='u-cf o-media--from-medium'>
+          <figure class='o-media__fig'><div class='[ fpo fpo--b fpo--fig ]'></div></figure>
+          <div class='o-media__content fpo'>
+            <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit.</span>
+
+            <! -- fourth level -->
+            <div class='u-cf o-media--from-large'>
+              <figure class='o-media__fig'><div class='[ fpo fpo--b fpo--fig ]'></div></figure>
+              <div class='o-media__content fpo fpo--c'>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </div>
+            </div>
+            <div class='u-cf o-media--from-large o-media--rev--from-large'>
+              <figure class='o-media__fig'><div class='[ fpo fpo--b fpo--fig ]'></div></figure>
+              <div class='o-media__content fpo fpo--d'>
+                <strong>Media objects can also be reversed</strong> Media Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+```
+
+JigSass Media also offers vertical alignment modifiers ([middle](#middle-aligned),
+[bottem](#bottom-aligned)) and a [reverse](#reversed) modifier.
+
+
+**License:** MIT
+
+
+
+[npm-image]: https://badge.fury.io/js/jigsass-objects-media.svg
+[npm-url]: https://npmjs.org/package/jigsass-objects-media
+
+[daviddm-image]: https://david-dm.org/TxHawks/jigsass-objects-media.svg?theme=shields.io
+[daviddm-url]: https://david-dm.org/TxHawks/jigsass-objects-media
+*/
+// stylelint-enable
+
+
+
+
+
+
+// -------------------------------------
+// Variables
+// -------------------------------------
+
+// stylelint-disable
+/* ---
+section: Media Object
+title: Configuration
+order: -1
+---
+JigSass Media allows for some modification through tweaking configuration variable.
+To override the default values, predefine them to your own needs _before_ importing
+this file.
+
+
+#### Flexbox support
+```scss
+$jigsass-media-flexbox
+```
+**Type:** `Boolean`
+
+Determines if flexbox should be enabled, where relevant
+
+**Default:** `true`
+
+
+#### Flexbox Fallback
+```scss
+$jigsass-media-flexbox-fallback
+```
+**Type:** `Boolean` or `String`
+
+Determines if flexbox fallback should be included and the qualifier class
+to use if so (e.g, `.no-flexbox` when using Modernizr defaults)
+
+Set to `false` to disable fallback altogether, and to a class-name
+(sans the leading `.`) used as the qualifier class if fallback is
+desirable.
+
+**Default:** `'no-flexbox'`
+*/
+// stylelint-enable
+
+/// Determines if flexbox should be enabled, where relevant
+/// ---
+/// @type {Boolean}
+/// ---
+$jigsass-media-flexbox: true;
+
+/// Determines if flexbox fallback should be included and the qualifier class
+/// to use if so (e.g, `.no-flexbox` when using Modernizr defaults)
+///
+/// Set to `false` to disable fallback altogether, and to a class-name
+/// (sans the leading `.`) used as the qualifier class if fallback is
+/// desirable.
+/// ---
+/// @type {Boolean | String}
+/// ---
+$jigsass-media-flexbox-fallback: 'no-flexbox';
+
+
+// Used internally to store doclets
+$_doclet-store: () !default;
+
+
+
+
+
+// -------------------------------------
+// Functions
+// -------------------------------------
+
+//
+
+
+
+
+
+// -------------------------------------
+// Mixins
+// -------------------------------------
+
+// stylelint-disable
+/* ---
+section: Media Object
+title: Media-obj mixin
+order: 0
+---
+```scss
+@mixin jigsass-media-obj($modifier: false, $from: false, $until: false, $misc: false) { ... }
+```
+
+
+#### Description
+Generates a media object or media objects modifier classes (container and child elements),
+optionally limited to a specific breakpoint defined in
+[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+
+
+#### Parameters
+Name | Description | Type | Default Value
+--- | --- | --- | ---
+`$modifier` | A media object modifier, e.g., `rev`, `middle`, etc.| `String` or `Boolean` | false
+`$from` | The name of breakpoint used as the min-width condition | `String` or `Boolean` | false
+`$until` | The name of breakpoint used as the max-width condition | `String` or `Boolean` | false
+`$misc` | The name of a miscellaneous media query condition | `String` or `Boolean` | false
+
+
+#### Example
+```scss
+@include jigsass-media-obj(rev, $from: medium);
+```
+
+Will generate:
+```scss
+@media (min-width: 37.5em) {
+  .o-media--rev--from-medium { ... }
+  .o-media--rev--from-medium .o-media__fig { ... }
+  .o-media--rev--from-medium .o-media__content { ... }
+}
+```
+*/
+// stylelint-enable
+/// Generates a media object or media objects modifier classes
+/// (container and child elements), optionally limited to a
+/// specific breakpoint defined in $jigsass-breakpoints
+/// ---
+/// @param {String | Boolean} $modifier [false]
+///   A media object modifier, if relevant.
+/// @param {String | Boolean} $from [false]
+///   The name of breakpoint used as the min-width condition.
+/// @param {String | Boolean} $until [false]
+///   The name of breakpoint used as the max-width condition.
+/// @param {String | Boolean} $misc [false]
+///   The name of a miscellaneous media query condition.
+/// ---
+/// @example scss - SCSS input
+///   @include jigsass-media-obj(rev, $from: medium);
+///
+/// @example scss - CSS output
+///   @media (min-width: 37.5em) {
+///     .o-media--rev--from-medium { ... }
+///     .o-media--rev--from-medium .o-media__fig { ... }
+///     .o-media--rev--from-medium .o-media__content { ... }
+///   }
+/// ---
+@mixin jigsass-media-obj($modifier: false, $from: false, $until: false, $misc: false) {
+  @if (not mixin-exists(jigsass-object)) {
+    @error '`jigsass-objects-media` has a dependency on `jigsass-tools-selectors. ' +
+      'Please import it.';
+  }
+  @include jigsass-object(o-media, $from, $until, $misc, $modifier);
+}
+
+
+
+
+
+// -------------------------------------
+// Definitions
+// -------------------------------------
+
+@include jigsass-define-object(o-media) {
+  // A flexbox enabled implementation of Nicole sullivan's
+  // [media object](http://bit.ly/Ku2rqE) with optional fallback
+  // ---
+  // 1. Needs to be clearfixed (`u-cf` class in the HTML)
+  // ---
+  @include jigsass-classname() {
+    @if ($jigsass-media-flexbox) {
+      display: flex;
+
+      > .o-media__content {
+        flex: 1 1 auto;
+      }
+
+      @if ($jigsass-media-flexbox-fallback) {
+        .#{$jigsass-media-flexbox-fallback} & {
+          @include jigsass-util(u-cf);  // [1]
+
+          display: block;
+
+          > .o-media__fig {
+            @include jigsass-bidi(float, start);
+            display: block;
+
+            img {
+              vertical-align: top;
+            }
+          }
+
+          > .o-media__content {
+            display: table-cell;
+            max-width: 100%;
+            width: 100000px;
+          }
+        }
+      }
+    }
+    @else {
+      @include jigsass-util(u-cf);  // [1]
+
+      display: block;
+
+      > .o-media__fig {
+        @include jigsass-bidi(float, start);
+        display: block;
+
+        img {
+          vertical-align: top;
+        }
+      }
+
+      > .o-media__content {
+        display: table-cell;
+        max-width: 100%;
+        width: 100000px;
+      }
+    }
+
+    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    @if (not index($_doclet-store, $_doclet)) {
+      $_doclet-store: append($_doclet-store, $_doclet) !global;
+      // stylelint-disable
+  /* ---
+  section: Media Object
+  title: Base
+  order: 1
+  ---
+  A flexbox enabled implementation of Nicole sullivan's
+  [media object](http://bit.ly/Ku2rqE) with optional fallback
+
+  Used to create a container with a fixed-width element at one end, and a fluid
+  width container next to it.
+
+  ```example:html
+  <div class='u-cf o-media'>
+    <figure class='o-media__fig'>
+      <div class='[ fpo fpo--b fpo--fig ]'></div>
+    </figure>
+    <div class='o-media__content fpo'>
+      <p style='text-align: center'<strong>.o-media__content</strong></p>
+    </div>
+  </div>
+  ```
+
+  A media object may be set to stack vertically by using responsive modifier classes
+  on the container (resize window to see object stacking and unstacking):
+
+  ```example:html
+  <div class='u-cf [ o-media--from-small-until-medium o-media--from-large ]'>
+    <figure class='o-media__fig'>
+      <div class='[ fpo fpo--b fpo--fig ]'></div>
+    </figure>
+    <div class='o-media__content fpo'>
+      <p style='text-align: center'>
+        <strong>Media object only from small until medium and  from large on.</strong>
+      </p>
+    </div>
+  </div>
+  ```
+
+
+  #### include with:
+  ```scss
+  @include jigsass-media-obj([$modifier, $from, $until, $misc]);
+  ```
+
+
+  #### Related Mixins:
+  [jigsass-media-obj](#media-obj-mixin): Generates a list abstraction or an abstraction's modifier,
+  optionally limited to a specific breakpoint defined in
+  [$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+
+
+  #### CSS Output
+
+  ```scss
+  //
+  When flexbox is enabled
+  .o-media {
+    display: flex;
+  }
+  .o-media > .o-media__content {
+    flex: 1 1 auto;
+  }
+
+
+  // When flexbox fallback is enabled
+  .u-clearfix { ... }
+  .#{$jigsass-media-flexbox-fallback} .o-media {
+    display: block;
+  }
+
+  .#{$jigsass-media-flexbox-fallback} .o-media > .o-media__fig {
+    @include jigsass-bidi(float, start);
+    display: block;
+  }
+
+  .#{$jigsass-media-flexbox-fallback} .o-media > .o-media__fig img {
+    vertical-align: top;
+  }
+
+  .#{$jigsass-media-flexbox-fallback} .o-media > .o-media__content {
+    display: table-cell;
+    max-width: 100%;
+    width: 100000px;
+  }
+
+
+  // When flexbox is disabled
+  .u-clearfix { ... }
+
+  .o-media {
+    display: block;
+  }
+
+  .o-media > .o-media__fig {
+    @include jigsass-bidi(float, start);
+    display: block;
+  }
+
+  .o-media > .o-media__fig img {
+    vertical-align: top;
+  }
+
+  .o-media > .o-media__content {
+    display: table-cell;
+    max-width: 100%;
+    width: 100000px;
+  }
+  ```
+  */
+      //stylelint-enable
+    }
+  }
+
+
+  @include jigsass-classname($modifier: middle) {
+    @if ($jigsass-media-flexbox) {
+      align-items: center;
+
+      @if ($jigsass-media-flexbox-fallback) {
+        .#{$jigsass-media-flexbox-fallback} & {
+          display: table;
+
+          > .o-media__fig {
+            display: inline-block;
+            float: none;
+          }
+
+          > .o-media__fig,
+          > .o-media-content {
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+    @else {
+      display: table;
+
+      > .o-media__fig {
+        display: inline-block;
+        float: none;
+      }
+
+      > .o-media__fig,
+      > .o-media-content {
+        vertical-align: middle;
+      }
+    }
+
+    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    @if (not index($_doclet-store, $_doclet)) {
+      $_doclet-store: append($_doclet-store, $_doclet) !global;
+
+      // stylelint-disable
+
+  /* ---
+  section: Media Object
+  title: Middle Aligned
+  order: 1
+  ---
+  A media object with items aligned to the vertical middle.
+
+  ```example:html
+  <div class='u-cf [ o-media o-media--middle ]'>
+    <figure class='o-media__fig'>
+      <div class='[ fpo fpo--b fpo--fig ]'></div>
+    </figure>
+    <div class='o-media__content fpo'>
+      <p style='text-align: center'<strong>.o-media__content</strong></p>
+    </div>
+  </div>
+  ```
+
+  Can also be applying responsively:
+
+  ```example:html
+  <div class='u-cf [ o-media o-media--middle--from-small-until-medium o-media--middle--from-large ]'>
+    <figure class='o-media__fig'>
+      <div class='[ fpo fpo--b fpo--fig ]'></div>
+    </figure>
+    <div class='o-media__content fpo'>
+      <p style='text-align: center'>
+        <strong>Middle aligned only from small until medium and  from large on.</strong>
+      </p>
+    </div>
+  </div>
+  ```
+
+
+  #### include with:
+  ```scss
+  @include jigsass-media-obj(middle[, $from, $until, $misc]);
+  ```
+
+
+  #### Related Mixins:
+  [jigsass-media-obj](#media-obj-mixin): Generates a list abstraction or an abstraction's modifier,
+  optionally limited to a specific breakpoint defined in
+  [$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+
+
+  #### CSS Output
+
+  ```scss
+  // When flexbox is enabled
+  .o-media--middle { align-items: center; }
+
+  // When flexbox fallback is enabled
+  .#{$jigsass-media-flexbox-fallback} .o-media--middle { display: table; }
+
+  .#{$jigsass-media-flexbox-fallback} .o-media--middle > .o-media__fig {
+    display: inline-block;
+    float: none;
+  }
+  .#{$jigsass-media-flexbox-fallback} .o-media--middle > .o-media__fig,
+  .#{$jigsass-media-flexbox-fallback} .o-media--middle > .o-media__content {
+    vertical-align: middle;
+  }
+
+
+  // When flexbox is disabled
+  .o-media--middle { display: table; }
+
+  .o-media--middle > .o-media__fig {
+    display: inline-block;
+    float: none;
+  }
+  .o-media--middle > .o-media__fig,
+  .o-media--middle > .o-media__content {
+    vertical-align: middle;
+  }
+  ```
+  */
+      //stylelint-enable
+    }
+  }
+
+  @include jigsass-classname($modifier: bottom) {
+    @if ($jigsass-media-flexbox) {
+      align-items: flex-end;
+
+      @if ($jigsass-media-flexbox-fallback) {
+        .#{$jigsass-media-flexbox-fallback} & {
+          display: table;
+
+          > .o-media__fig {
+            display: inline-block;
+            float: none;
+          }
+
+          > .o-media__fig,
+          > .o-media-content {
+            vertical-align: bottom;
+          }
+        }
+      }
+    }
+    @else {
+      display: table;
+
+      > .o-media__fig {
+        display: inline-block;
+        float: none;
+      }
+
+      > .o-media__fig,
+      > .o-media-content {
+        vertical-align: bottom;
+      }
+    }
+
+    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    @if (not index($_doclet-store, $_doclet)) {
+      $_doclet-store: append($_doclet-store, $_doclet) !global;
+
+      // stylelint-disable
+
+  /* ---
+  section: Media Object
+  title: Bottom Aligned
+  order: 2
+  ---
+  A media object with items aligned to the vertical bottom.
+
+  ```example:html
+  <div class='u-cf [ o-media o-media--bottom ]'>
+    <figure class='o-media__fig'>
+      <div class='[ fpo fpo--b fpo--fig ]'></div>
+    </figure>
+    <div class='o-media__content fpo'>
+      <p style='text-align: center'<strong>.o-media__content</strong></p>
+    </div>
+  </div>
+  ```
+
+  Can also be applying responsively:
+
+  ```example:html
+  <div class='u-cf [ o-media o-media--bottom--from-small-until-medium o-media--bottom--from-large ]'>
+    <figure class='o-media__fig'>
+      <div class='[ fpo fpo--b fpo--fig ]'></div>
+    </figure>
+    <div class='o-media__content fpo'>
+      <p style='text-align: center'>
+        <strong>Bottom aligned only from small until medium and  from large on.</strong>
+      </p>
+    </div>
+  </div>
+  ```
+
+
+  #### include with:
+  ```scss
+  @include jigsass-media-obj(bottom[, $from, $until, $misc]);
+  ```
+
+
+  #### Related Mixins:
+  [jigsass-media-obj](#media-obj-mixin): Generates a list abstraction or an abstraction's modifier,
+  optionally limited to a specific breakpoint defined in
+  [$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+
+
+  #### CSS Output
+
+  ```scss
+  // When flexbox is enabled
+  .o-media--bottom { align-items: flex-end; }
+
+  // When flexbox fallback is enabled
+  .#{$jigsass-media-flexbox-fallback} .o-media--bottom { display: table; }
+
+  .#{$jigsass-media-flexbox-fallback} .o-media--bottom > .o-media__fig {
+    display: inline-block;
+    float: none;
+  }
+  .#{$jigsass-media-flexbox-fallback} .o-media--bottom > .o-media__fig,
+  .#{$jigsass-media-flexbox-fallback} .o-media--bottom > .o-media__content {
+    vertical-align: bottom;
+  }
+
+
+  // When flexbox is disabled
+  .o-media--bottom { display: table; }
+
+  .o-media--bottom > .o-media__fig {
+    display: inline-block;
+    float: none;
+  }
+  .o-media--bottom > .o-media__fig,
+  .o-media--bottom > .o-media__content {
+    vertical-align: bottom;
+  }
+  ```
+  */
+      //stylelint-enable
+    }
+  }
+
+
+  // A reversed media object
+  // ---
+  // 1. Reverse the container's direction
+  // 2. Restore direction of container's children
+  // ---
+  @include jigsass-classname($modifier: rev) {
+    @if ($jigsass-media-flexbox) {
+      flex-direction: row-reverse;
+
+      @if ($jigsass-media-flexbox-fallback) {
+        .#{$jigsass-media-flexbox-fallback} & {
+          @if (not mixin-exists(jigsass-bidi)) {
+            @error '`jigsass-objects-media` has a dependency on `jigsass-tools-bidi`.
+            Please import it.';
+          }
+
+          @include jigsass-bidi(direction, ets);      // [1]
+
+          > * {
+            @include jigsass-bidi(direction, ste);    // [2]
+          }
+        }
+      }
+
+      @else {
+        @if (not mixin-exists(jigsass-bidi)) {
+          @error '`jigsass-objects-media` has a dependency on `jigsass-tools-bidi`.
+          Please import it.';
+        }
+
+        @include jigsass-bidi(direction, ets);      // [1]
+
+        > * {
+          @include jigsass-bidi(direction, ste);    // [2]
+        }
+      }
+    }
+    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    @if (not index($_doclet-store, $_doclet)) {
+      $_doclet-store: append($_doclet-store, $_doclet) !global;
+
+      // stylelint-disable
+
+  /* ---
+  section: Media Object
+  title: Reversed
+  order: 3
+  ---
+  A media object in which elements are displayed opposite of their position in
+  the source order.
+
+  ```example:html
+  <div class='u-cf [ o-media o-media--rev ]'>
+    <figure class='o-media__fig'>
+      <div class='[ fpo fpo--b fpo--fig ]'></div>
+    </figure>
+    <div class='o-media__content fpo'>
+      <p style='text-align: center'<strong>I am actually second in the source order</strong></p>
+    </div>
+  </div>
+  ```
+
+  Can also be applying responsively:
+
+  ```example:html
+  <div class='u-cf [ o-media o-media--rev--from-small-until-medium o-media--rev--from-large ]'>
+    <figure class='o-media__fig'>
+      <div class='[ fpo fpo--b fpo--fig ]'></div>
+    </figure>
+    <div class='o-media__content fpo'>
+      <p style='text-align: center'>
+        <strong>Reversed only from small until medium and  from large on.</strong><br />
+        I am actually second in the dource order...
+      </p>
+    </div>
+  </div>
+  ```
+
+
+  #### include with:
+  ```scss
+  @include jigsass-media-obj(rev[, $from, $until, $misc]);
+  ```
+
+
+  #### Related Mixins:
+  [jigsass-media-obj](#media-obj-mixin): Generates a list abstraction or an abstraction's modifier,
+  optionally limited to a specific breakpoint defined in
+  [$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+
+
+  #### CSS Output
+
+  ```scss
+  // When flexbox is enabled
+  .o-media--rev { flex-direction: row-reverse; }
+
+  // When flexbox fallback is enabled
+  .#{$jigsass-media-flexbox-fallback} .o-media--rev { direction: (ltr|rtl); }
+  .#{$jigsass-media-flexbox-fallback} .o-media--rev > * { direction: (rtl|ltr); }
+
+  // When flexbox is disabled
+  .o-media--rev { direction: (ltr|rtl); }
+  .o-media--rev > * { direction: (rtl|ltr); }
+  ```
+  */
+
+      //stylelint-enable
+    }
+  }
+}
