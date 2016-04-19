@@ -252,7 +252,7 @@ desirable.
 /// ---
 /// @type {Boolean}
 /// ---
-$jigsass-media-flexbox: true;
+$jigsass-media-flexbox: true !default;
 
 /// Determines if flexbox fallback should be included and the qualifier class
 /// to use if so (e.g, `.no-flexbox` when using Modernizr defaults)
@@ -263,7 +263,7 @@ $jigsass-media-flexbox: true;
 /// ---
 /// @type {Boolean | String}
 /// ---
-$jigsass-media-flexbox-fallback: 'no-flexbox';
+$jigsass-media-flexbox-fallback: 'no-flexbox' !default;
 
 
 // Used internally to store doclets
@@ -483,8 +483,7 @@ Will generate:
   #### CSS Output
 
   ```scss
-  //
-  When flexbox is enabled
+  // When flexbox is enabled
   .o-media {
     display: flex;
   }
