@@ -31,24 +31,34 @@
 // Styles
 // --------------------
 
+$jigsass-media-obj-conf: (
+  no-breakpoint: (
+    no-modifier: true,
+    middle: true,
+    bottom: true,
+    rev: true,
+  ),
+  from-medium: (
+    no-modifier: true,
+    middle: true,
+    bottom: true,
+    rev: true,
+  ),
+  from-large: (
+    no-modifier: true,
+    middle: true,
+    bottom: true,
+    rev: true,
+  ),
+  from-small-until-medium: (
+    no-modifier: true,
+    middle: true,
+    bottom: true,
+    rev: true,
+  ),
+);
+
 @import 'index.scss';
-
-@include jigsass-media-obj;
-@include jigsass-media-obj($from: medium);
-@include jigsass-media-obj($from: large);
-@include jigsass-media-obj($from: small, $until: medium);
-
-@include jigsass-media-obj($modifier: middle);
-@include jigsass-media-obj($modifier: middle, $from: large);
-@include jigsass-media-obj($modifier: middle, $from: small, $until: medium);
-
-@include jigsass-media-obj($modifier: bottom);
-@include jigsass-media-obj($modifier: bottom, $from: large);
-@include jigsass-media-obj($modifier: bottom, $from: small, $until: medium);
-
-@include jigsass-media-obj($modifier: rev);
-@include jigsass-media-obj($modifier: rev, $from: large);
-@include jigsass-media-obj($modifier: rev, $from: small, $until: medium);
 
 
 // --- utils --- //

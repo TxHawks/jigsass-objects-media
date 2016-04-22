@@ -12,7 +12,7 @@
 // Dependencies
 // -------------------------------------
 
-@if (not mixin-exists(jigsass-define-object)) {
+@if (not mixin-exists(jigsass-object)) {
   @error '`jigsass-objects-media` has a dependency on `jigsass-tools-selectors`.
     Please import it.';
 }
@@ -32,15 +32,14 @@ title: Introduction
 order: -10
 ---
 
-[![NPM version][npm-image]][npm-url]
-[![Dependency Status][daviddm-image]][daviddm-url]
-
 A flexbox enabled version of @Stubbornella's media object
+
+**[GitHub page](https://txhawks.github.io/jigsass-objects-media)**
 
 The [media object](http://bit.ly/Ku2rqE), introduced by Nichole Sullivan, is a
 layout abstraction for placing fixed width content and fluid content side by side.
 
-JigSass Media is a flexbox enabled implementation of the orginal, with optional fallback
+JigSass Media is a flexbox enabled implementation of the original, with optional fallback
 (See [Configuration](#configutation)).
 
 ## Installation
@@ -52,7 +51,7 @@ npm i -S jigsass-objects-media
 ```
 
 ## Usage
-First, you need to import JigSass Objects Media:
+First, import JigSass Objects Media to your main stylesheet:
 
 ```scss
 @import 'path/to/jigsass-objects-media/scss/index';
@@ -60,55 +59,52 @@ First, you need to import JigSass Objects Media:
 
 And optionally [reconfigure](#configuration) the defaults to your liking.
 
-Like all other JigSass modules, JigSass Media does not automatically generate any CSS when imported.
+Like all other JigSass modules, JigSass Button does not automatically generate any CSS when imported.
 In order to use its classes, you would have to first explicitly indicate your intention to use
-them, using the [jigsass-media-obj](https://txhawks.github.io/jigsass-objects-media/#media-obj-mixin)
-mixin. This way our css remains small and maintainable:
-
-```scss
-@include jigsass-media-obj([$modifier, $from-brekpoint, $until-breakpoint, $misc-breakpoint]);
-```
+them by enabling their generation in the associated [configurations map](#css-output), leaving
+us only with CSS we need:
 
 All JigSass Media classes are responsive-enabled, using
 [JigSass MQ](https://txhawks.github.io/jigsass-tools-mq/) and the breakpoints defined in the
 [$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)
 variable.
 
-Based on the arguments passed to the jigsass-media-obj mixin, responsive modifiers are
+Based on enabled selectors in the [configuration map](#css-output), responsive modifiers are
 generated according to the following logic:
 
 ```scss
-.o-media--modifier[-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
+.o-media[--modifier][-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
 ```
 
 So, assuming the `medium`, `large` and `landscape` breakpoints are defined in `$jigsass-breakpoints`
 as `600px`, `1024px` and `(orientation: landscape)` respectively,
 
 ```scss
-@include jigsass-media-obj($modifier: bottom);
-```
-will generate the `.o-media--bottom` class, which is not limited to any media-query.
-
-```scss
-@include jigsass-media-obj( $modifier: bottom, $until: medium);
-```
-
-will generate the `.o-media--bottom--until-medium` class, which will be in effect at
-`(max-width: 37.49em)` and will override styles in the default class until that point.
-
-```scss
-@include jigsass-media-obj $modifier: bottom, $from: large, $misc: landscape);
+$jigsass-media-obj-conf: (
+  no-breakpoint: (
+    bottom: true,
+  ),
+  until-medium: (
+    bottom: true,
+  ),
+  from-large-when-landscape: (
+    bottom: true,
+  ),
+)
 ```
 
-will generate the `.o-media--bottom--from-large-when-landscape` class, which will go into
-effect at `(min-width: 64em) and (orientation: landscape)` and will override styles in the default
-class under these  conditions.
+will generate the following classes:
+  - `.o-media--bottom`, which is not limited to any media-query.
+  - `.o-media--bottom--until-medium`, which will be in effect at
+    `(max-width: 37.49em)` and will override styles in the default class
+    until that point.
+  - `.o-media-bottom--from-large-when-landscape`, which will go into effect at
+    `(min-width: 64em) and (orientation: landscape)` and will override styles
+    in the default class under these  conditions.
 
-Regardless of how many times a class is included, or where, it will only be generated once,
-where the `jigsass-objects-media` partial was imported, leaving us with a css file as small
-as possible, and a predictable cascade.
 
 -----
+
 
 At its simplest form, the media object is simply a fixed element next to a fluid element,
 filling up available space:
@@ -190,16 +186,8 @@ JigSass Media also offers vertical alignment modifiers ([middle](#middle-aligned
 
 **License:** MIT
 
-
-
-[npm-image]: https://badge.fury.io/js/jigsass-objects-media.svg
-[npm-url]: https://npmjs.org/package/jigsass-objects-media
-
-[daviddm-image]: https://david-dm.org/TxHawks/jigsass-objects-media.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/TxHawks/jigsass-objects-media
 */
 // stylelint-enable
-
 
 
 
@@ -208,6 +196,136 @@ JigSass Media also offers vertical alignment modifiers ([middle](#middle-aligned
 // -------------------------------------
 // Variables
 // -------------------------------------
+
+// stylelint-disable
+/* ---
+section: Media Object
+title: CSS Outpout
+order: -2
+---
+By default, JigSass Media does not generate any CSS output when imported into
+a stylesheet. CSS output must be enabled on a per-selector basis, inside the
+dedicated configuration map:
+
+
+```scss
+$jigsass-media-obj-config
+```
+
+**Type:** `Map`
+
+Configuration map for enabling generation of
+media object and modifier classes.
+
+
+**Default:**
+```scss
+$jigsass-media-obj-conf: (
+  no-breakpoint: (
+    no-modifier: false,
+    middle: false,
+    bottom: false,
+    rev: false,
+  ),
+);
+```
+
+
+**Example:**
+```scss
+$jigsass-media-obj-conf: (
+  no-breakpoint: (
+    no-modifier: true,  // Enables generation of the `.o-media`
+                        // class outside of any media query.
+    foo: true,          // Enables generation of the `.o-media--foo`
+                        // modifier class outside of any media query.
+  ),
+  from-<bp-name>: (
+    no-modifier: true,  // Enables generation of the `.o-media--from-<bp-name>`
+                        // class inside a min-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+    foo: true,          // Enables generation of the `.o-media--foo--from-<bp-name>`
+                        // class inside a min-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  ),
+  until-<bp-name>: (
+    no-modifier: true,  // Enables generation of the `.o-media--until-<bp-name>`
+                        // class inside a max-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  foo: true,          // Enables generation of the `.o-media--foo--until-<bp-name>`
+                        // class inside a max-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  ),
+  when-<bp-name>: (
+    no-modifier: true,  // Enables generation of the `.o-media--when-<bp-name>`
+                        // class inside a misc media query
+                        // defined ins `$jigsass-breakpoints.features`.
+    foo: true,          // Enables generation of the `.o-media--foo--when-<bp-name>`
+                        // class inside a misc media query
+                        // defined ins `$jigsass-breakpoints.features`.
+  ),
+  from-<bp-name>-until-<bp-name>: (...);
+  from-<bp-name>-when-<bp-name>: (...);
+  until-<bp-name>-when-<bp-name>: (...);
+  from-<bp-name>-until-<bp-name>-when-<bp-name>: (...);
+);
+```
+*/
+// stylelint-enable
+
+/// Configuration map for enabling generation of
+/// media object and modifier classes.
+/// ---
+/// @example
+///		$jigsass-media-obj-conf: (
+///    no-breakpoint: (
+///      no-modifier: true,  // Enables generation of the `.o-media`
+///                          // class outside of any media query.
+///      foo: true,          // Enables generation of the `.o-media--foo`
+///                          // modifier class outside of any media query.
+///    ),
+///    from-<bp-name>: (
+///      no-modifier: true,  // Enables generation of the `.o-media--from-<bp-name>`
+///                          // class inside a min-width media query
+///                          // defined ins `$jigsass-breakpoints.length`.
+///      foo: true,          // Enables generation of the `.o-media--foo--from-<bp-name>`
+///                          // class inside a min-width media query
+///                          // defined ins `$jigsass-breakpoints.length`.
+///    ),
+///    until-<bp-name>: (
+///      no-modifier: true,  // Enables generation of the `.o-media--until-<bp-name>`
+///                          // class inside a max-width media query
+///                          // defined ins `$jigsass-breakpoints.length`.
+///     foo: true,          // Enables generation of the `.o-media--foo--until-<bp-name>`
+///                          // class inside a max-width media query
+///                          // defined ins `$jigsass-breakpoints.length`.
+///    ),
+///    when-<bp-name>: (
+///      no-modifier: true,  // Enables generation of the `.o-media--when-<bp-name>`
+///                          // class inside a misc media query
+///                          // defined ins `$jigsass-breakpoints.features`.
+///      foo: true,          // Enables generation of the `.o-media--foo--when-<bp-name>`
+///                          // class inside a misc media query
+///                          // defined ins `$jigsass-breakpoints.features`.
+///    ),
+///    from-<bp-name>-until-<bp-name>: (...);
+///    from-<bp-name>-when-<bp-name>: (...);
+///    until-<bp-name>-when-<bp-name>: (...);
+///    from-<bp-name>-until-<bp-name>-when-<bp-name>: (...);
+///  );
+/// ---
+/// @type {Map}
+/// ---
+$jigsass-media-obj-conf: (
+  no-breakpoint: (
+    no-modifier: false,
+    middle: false,
+    bottom: false,
+    rev: false,
+  ),
+) !default;
+
+
 
 // stylelint-disable
 /* ---
@@ -287,77 +405,7 @@ $_doclet-store: () !default;
 // Mixins
 // -------------------------------------
 
-// stylelint-disable
-/* ---
-section: Media Object
-title: Media-obj mixin
-order: 0
----
-```scss
-@mixin jigsass-media-obj($modifier: false, $from: false, $until: false, $misc: false) { ... }
-```
-
-
-#### Description
-Generates a media object or media objects modifier classes (container and child elements),
-optionally limited to a specific breakpoint defined in
-[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
-
-
-#### Parameters
-Name | Description | Type | Default Value
---- | --- | --- | ---
-`$modifier` | A media object modifier, e.g., `rev`, `middle`, etc.| `String` or `Boolean` | false
-`$from` | The name of breakpoint used as the min-width condition | `String` or `Boolean` | false
-`$until` | The name of breakpoint used as the max-width condition | `String` or `Boolean` | false
-`$misc` | The name of a miscellaneous media query condition | `String` or `Boolean` | false
-
-
-#### Example
-```scss
-@include jigsass-media-obj(rev, $from: medium);
-```
-
-Will generate:
-```scss
-@media (min-width: 37.5em) {
-  .o-media--rev--from-medium { ... }
-  .o-media--rev--from-medium .o-media__fig { ... }
-  .o-media--rev--from-medium .o-media__content { ... }
-}
-```
-*/
-// stylelint-enable
-/// Generates a media object or media objects modifier classes
-/// (container and child elements), optionally limited to a
-/// specific breakpoint defined in $jigsass-breakpoints
-/// ---
-/// @param {String | Boolean} $modifier [false]
-///   A media object modifier, if relevant.
-/// @param {String | Boolean} $from [false]
-///   The name of breakpoint used as the min-width condition.
-/// @param {String | Boolean} $until [false]
-///   The name of breakpoint used as the max-width condition.
-/// @param {String | Boolean} $misc [false]
-///   The name of a miscellaneous media query condition.
-/// ---
-/// @example scss - SCSS input
-///   @include jigsass-media-obj(rev, $from: medium);
-///
-/// @example scss - CSS output
-///   @media (min-width: 37.5em) {
-///     .o-media--rev--from-medium { ... }
-///     .o-media--rev--from-medium .o-media__fig { ... }
-///     .o-media--rev--from-medium .o-media__content { ... }
-///   }
-/// ---
-@mixin jigsass-media-obj($modifier: false, $from: false, $until: false, $misc: false) {
-  @if (not mixin-exists(jigsass-object)) {
-    @error '`jigsass-objects-media` has a dependency on `jigsass-tools-selectors. ' +
-      'Please import it.';
-  }
-  @include jigsass-object(o-media, $from, $until, $misc, $modifier);
-}
+//
 
 
 
@@ -367,7 +415,7 @@ Will generate:
 // Definitions
 // -------------------------------------
 
-@include jigsass-define-object(o-media) {
+@include jigsass-object(o-media, $jigsass-media-obj-conf) {
   // A flexbox enabled implementation of Nicole sullivan's
   // [media object](http://bit.ly/Ku2rqE) with optional fallback
   // ---
@@ -425,7 +473,7 @@ Will generate:
       }
     }
 
-    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    $_doclet: $jigsass-obj-name + ($jigsass-obj-modifier or '');
     @if (not index($_doclet-store, $_doclet)) {
       $_doclet-store: append($_doclet-store, $_doclet) !global;
       // stylelint-disable
@@ -576,7 +624,7 @@ Will generate:
       }
     }
 
-    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    $_doclet: $jigsass-obj-name + ($jigsass-obj-modifier or '');
     @if (not index($_doclet-store, $_doclet)) {
       $_doclet-store: append($_doclet-store, $_doclet) !global;
 
@@ -698,7 +746,7 @@ Will generate:
       }
     }
 
-    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    $_doclet: $jigsass-obj-name + ($jigsass-obj-modifier or '');
     @if (not index($_doclet-store, $_doclet)) {
       $_doclet-store: append($_doclet-store, $_doclet) !global;
 
@@ -824,7 +872,7 @@ Will generate:
         }
       }
     }
-    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    $_doclet: $jigsass-obj-name + ($jigsass-obj-modifier or '');
     @if (not index($_doclet-store, $_doclet)) {
       $_doclet-store: append($_doclet-store, $_doclet) !global;
 

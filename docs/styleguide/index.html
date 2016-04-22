@@ -24,12 +24,12 @@
 				</li>
 				
 				<li>
-					<a href="#configuration"><span>Configuration</span></a>
+					<a href="#css-outpout"><span>CSS Outpout</span></a>
 					
 				</li>
 				
 				<li>
-					<a href="#media-obj-mixin"><span>Media-obj mixin</span></a>
+					<a href="#configuration"><span>Configuration</span></a>
 					
 				</li>
 				
@@ -72,53 +72,57 @@
 		<section id="introduction">
 			<h3>Introduction</h3>
 			<div>
-				<p><a href="https://npmjs.org/package/jigsass-objects-media"><img src="https://badge.fury.io/js/jigsass-objects-media.svg" alt="NPM version"></a>
-<a href="https://david-dm.org/TxHawks/jigsass-objects-media"><img src="https://david-dm.org/TxHawks/jigsass-objects-media.svg?theme=shields.io" alt="Dependency Status"></a></p>
-<p>A flexbox enabled version of @Stubbornella&#39;s media object</p>
+				<p>A flexbox enabled version of @Stubbornella&#39;s media object</p>
+<p><strong><a href="https://txhawks.github.io/jigsass-objects-media">GitHub page</a></strong></p>
 <p>The <a href="http://bit.ly/Ku2rqE">media object</a>, introduced by Nichole Sullivan, is a
 layout abstraction for placing fixed width content and fluid content side by side.</p>
-<p>JigSass Media is a flexbox enabled implementation of the orginal, with optional fallback
+<p>JigSass Media is a flexbox enabled implementation of the original, with optional fallback
 (See <a href="#configutation">Configuration</a>).</p>
 <h2 id="installation">Installation</h2>
 <p>Using npm:</p>
 <pre><code class="lang-sh">npm i -S jigsass-objects-media
 </code></pre>
 <h2 id="usage">Usage</h2>
-<p>First, you need to import JigSass Objects Media:</p>
+<p>First, import JigSass Objects Media to your main stylesheet:</p>
 <pre><code class="lang-scss">@import &#39;path/to/jigsass-objects-media/scss/index&#39;;
 </code></pre>
 <p>And optionally <a href="#configuration">reconfigure</a> the defaults to your liking.</p>
-<p>Like all other JigSass modules, JigSass Media does not automatically generate any CSS when imported.
+<p>Like all other JigSass modules, JigSass Button does not automatically generate any CSS when imported.
 In order to use its classes, you would have to first explicitly indicate your intention to use
-them, using the <a href="https://txhawks.github.io/jigsass-objects-media/#media-obj-mixin">jigsass-media-obj</a>
-mixin. This way our css remains small and maintainable:</p>
-<pre><code class="lang-scss">@include jigsass-media-obj([$modifier, $from-brekpoint, $until-breakpoint, $misc-breakpoint]);
-</code></pre>
+them by enabling their generation in the associated <a href="#css-output">configurations map</a>, leaving
+us only with CSS we need:</p>
 <p>All JigSass Media classes are responsive-enabled, using
 <a href="https://txhawks.github.io/jigsass-tools-mq/">JigSass MQ</a> and the breakpoints defined in the
 <a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>
 variable.</p>
-<p>Based on the arguments passed to the jigsass-media-obj mixin, responsive modifiers are
+<p>Based on enabled selectors in the <a href="#css-output">configuration map</a>, responsive modifiers are
 generated according to the following logic:</p>
-<pre><code class="lang-scss">.o-media--modifier[-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
+<pre><code class="lang-scss">.o-media[--modifier][-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
 </code></pre>
 <p>So, assuming the <code>medium</code>, <code>large</code> and <code>landscape</code> breakpoints are defined in <code>$jigsass-breakpoints</code>
 as <code>600px</code>, <code>1024px</code> and <code>(orientation: landscape)</code> respectively,</p>
-<pre><code class="lang-scss">@include jigsass-media-obj($modifier: bottom);
+<pre><code class="lang-scss">$jigsass-media-obj-conf: (
+  no-breakpoint: (
+    bottom: true,
+  ),
+  until-medium: (
+    bottom: true,
+  ),
+  from-large-when-landscape: (
+    bottom: true,
+  ),
+)
 </code></pre>
-<p>will generate the <code>.o-media--bottom</code> class, which is not limited to any media-query.</p>
-<pre><code class="lang-scss">@include jigsass-media-obj( $modifier: bottom, $until: medium);
-</code></pre>
-<p>will generate the <code>.o-media--bottom--until-medium</code> class, which will be in effect at
-<code>(max-width: 37.49em)</code> and will override styles in the default class until that point.</p>
-<pre><code class="lang-scss">@include jigsass-media-obj $modifier: bottom, $from: large, $misc: landscape);
-</code></pre>
-<p>will generate the <code>.o-media--bottom--from-large-when-landscape</code> class, which will go into
-effect at <code>(min-width: 64em) and (orientation: landscape)</code> and will override styles in the default
-class under these  conditions.</p>
-<p>Regardless of how many times a class is included, or where, it will only be generated once,
-where the <code>jigsass-objects-media</code> partial was imported, leaving us with a css file as small
-as possible, and a predictable cascade.</p>
+<p>will generate the following classes:</p>
+<ul>
+<li><code>.o-media--bottom</code>, which is not limited to any media-query.</li>
+<li><code>.o-media--bottom--until-medium</code>, which will be in effect at
+<code>(max-width: 37.49em)</code> and will override styles in the default class
+until that point.</li>
+<li><code>.o-media-bottom--from-large-when-landscape</code>, which will go into effect at
+<code>(min-width: 64em) and (orientation: landscape)</code> and will override styles
+in the default class under these  conditions.</li>
+</ul>
 <hr>
 <p>At its simplest form, the media object is simply a fixed element next to a fluid element,
 filling up available space:</p>
@@ -193,6 +197,70 @@ may be set to stack vertically by using responsive modifier classes on the conta
 			</div>
 		</section>
 		
+		<section id="css-outpout">
+			<h3>CSS Outpout</h3>
+			<div>
+				<p>By default, JigSass Media does not generate any CSS output when imported into
+a stylesheet. CSS output must be enabled on a per-selector basis, inside the
+dedicated configuration map:</p>
+<pre><code class="lang-scss">$jigsass-media-obj-config
+</code></pre>
+<p><strong>Type:</strong> <code>Map</code></p>
+<p>Configuration map for enabling generation of
+media object and modifier classes.</p>
+<p><strong>Default:</strong></p>
+<pre><code class="lang-scss">$jigsass-media-obj-conf: (
+  no-breakpoint: (
+    no-modifier: false,
+    middle: false,
+    bottom: false,
+    rev: false,
+  ),
+);
+</code></pre>
+<p><strong>Example:</strong></p>
+<pre><code class="lang-scss">$jigsass-media-obj-conf: (
+  no-breakpoint: (
+    no-modifier: true,  // Enables generation of the `.o-media`
+                        // class outside of any media query.
+    foo: true,          // Enables generation of the `.o-media--foo`
+                        // modifier class outside of any media query.
+  ),
+  from-&lt;bp-name&gt;: (
+    no-modifier: true,  // Enables generation of the `.o-media--from-&lt;bp-name&gt;`
+                        // class inside a min-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+    foo: true,          // Enables generation of the `.o-media--foo--from-&lt;bp-name&gt;`
+                        // class inside a min-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  ),
+  until-&lt;bp-name&gt;: (
+    no-modifier: true,  // Enables generation of the `.o-media--until-&lt;bp-name&gt;`
+                        // class inside a max-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  foo: true,          // Enables generation of the `.o-media--foo--until-&lt;bp-name&gt;`
+                        // class inside a max-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  ),
+  when-&lt;bp-name&gt;: (
+    no-modifier: true,  // Enables generation of the `.o-media--when-&lt;bp-name&gt;`
+                        // class inside a misc media query
+                        // defined ins `$jigsass-breakpoints.features`.
+    foo: true,          // Enables generation of the `.o-media--foo--when-&lt;bp-name&gt;`
+                        // class inside a misc media query
+                        // defined ins `$jigsass-breakpoints.features`.
+  ),
+  from-&lt;bp-name&gt;-until-&lt;bp-name&gt;: (...);
+  from-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+  until-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+  from-&lt;bp-name&gt;-until-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+);
+</code></pre>
+
+				
+			</div>
+		</section>
+		
 		<section id="configuration">
 			<h3>Configuration</h3>
 			<div>
@@ -215,67 +283,6 @@ to use if so (e.g, <code>.no-flexbox</code> when using Modernizr defaults)</p>
 (sans the leading <code>.</code>) used as the qualifier class if fallback is
 desirable.</p>
 <p><strong>Default:</strong> <code>&#39;no-flexbox&#39;</code></p>
-
-				
-			</div>
-		</section>
-		
-		<section id="media-obj-mixin">
-			<h3>Media-obj mixin</h3>
-			<div>
-				<pre><code class="lang-scss">@mixin jigsass-media-obj($modifier: false, $from: false, $until: false, $misc: false) { ... }
-</code></pre>
-<h4 id="description">Description</h4>
-<p>Generates a media object or media objects modifier classes (container and child elements),
-optionally limited to a specific breakpoint defined in
-<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
-<h4 id="parameters">Parameters</h4>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Type</th>
-<th>Default Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>$modifier</code></td>
-<td>A media object modifier, e.g., <code>rev</code>, <code>middle</code>, etc.</td>
-<td><code>String</code> or <code>Boolean</code></td>
-<td>false</td>
-</tr>
-<tr>
-<td><code>$from</code></td>
-<td>The name of breakpoint used as the min-width condition</td>
-<td><code>String</code> or <code>Boolean</code></td>
-<td>false</td>
-</tr>
-<tr>
-<td><code>$until</code></td>
-<td>The name of breakpoint used as the max-width condition</td>
-<td><code>String</code> or <code>Boolean</code></td>
-<td>false</td>
-</tr>
-<tr>
-<td><code>$misc</code></td>
-<td>The name of a miscellaneous media query condition</td>
-<td><code>String</code> or <code>Boolean</code></td>
-<td>false</td>
-</tr>
-</tbody>
-</table>
-<h4 id="example">Example</h4>
-<pre><code class="lang-scss">@include jigsass-media-obj(rev, $from: medium);
-</code></pre>
-<p>Will generate:</p>
-<pre><code class="lang-scss">@media (min-width: 37.5em) {
-  .o-media--rev--from-medium { ... }
-  .o-media--rev--from-medium .o-media__fig { ... }
-  .o-media--rev--from-medium .o-media__content { ... }
-}
-</code></pre>
 
 				
 			</div>
@@ -318,8 +325,7 @@ optionally limited to a specific breakpoint defined in
   optionally limited to a specific breakpoint defined in
   <a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
 <h4 id="css-output">CSS Output</h4>
-<pre><code class="lang-scss">  //
-  When flexbox is enabled
+<pre><code class="lang-scss">  // When flexbox is enabled
   .o-media {
     display: flex;
   }
@@ -563,7 +569,7 @@ optionally limited to a specific breakpoint defined in
 			</div>
 		</section>
 		
-	<footer>Last modified Tuesday, 5 April 2016 19:23</footer>
+	<footer>Last modified Friday, 22 April 2016 17:59</footer>
 </main>
 <script src="prism.js"></script>
 <script src="examples.js"></script>

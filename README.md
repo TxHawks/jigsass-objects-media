@@ -20,59 +20,58 @@ npm i -S jigsass-objects-media
 
 ## Usage
 First, you need to import JigSass Objects Media:
+First, import JigSass Objects Media to your main stylesheet:
 
 ```scss
 @import 'path/to/jigsass-objects-media/scss/index';
 ```
 And optionally [reconfigure](https://txhawks.github.io/jigsass-objects-media/#configuration) the defaults to your liking.
 
-Like all other JigSass modules, JigSass Media does not automatically generate any CSS when imported.
+Like all other JigSass modules, JigSass Button does not automatically generate any CSS when imported.
 In order to use its classes, you would have to first explicitly indicate your intention to use
-them, using the [jigsass-media-obj](https://txhawks.github.io/jigsass-objects-media/#media-obj-mixin)
-mixin. This way our css remains small and maintainable:
-
-```scss
-@include jigsass-media-obj([$modifier, $from-brekpoint, $until-breakpoint, $misc-breakpoint]);
-```
+them by enabling their generation in the associated 
+[configurations map](https://txhawks.github.io/jigsass-objects-media/#css-output), 
+leaving us only with CSS we need:
 
 All JigSass Media classes are responsive-enabled, using
 [JigSass MQ](https://txhawks.github.io/jigsass-tools-mq/) and the breakpoints defined in the
 [$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)
 variable.
 
-Based on the arguments passed to the jigsass-media-obj mixin, responsive modifiers are
-generated according to the following logic:
+Based on enabled selectors in the 
+[configuration map](https://txhawks.github.io/jigsass-objects-media/#css-output), 
+responsive modifiers are generated according to the following logic:
 
 ```scss
-.o-media--modifier[-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
+.o-media[--modifier][-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
 ```
 
 So, assuming the `medium`, `large` and `landscape` breakpoints are defined in `$jigsass-breakpoints`
 as `600px`, `1024px` and `(orientation: landscape)` respectively,
 
 ```scss
-@include jigsass-media-obj($modifier: bottom);
-```
-will generate the `.o-media--bottom` class, which is not limited to any media-query.
-
-```scss
-@include jigsass-media-obj( $modifier: bottom, $until: medium);
-```
-
-will generate the `.o-media--bottom--until-medium` class, which will be in effect at
-`(max-width: 37.49em)` and will override styles in the default class until that point.
-
-```scss
-@include jigsass-media-obj $modifier: bottom, $from: large, $misc: landscape);
+$jigsass-media-obj-conf: (
+  no-breakpoint: (
+    bottom: true,
+  ),
+  until-medium: (
+    bottom: true,
+  ),
+  from-large-when-landscape: (
+    bottom: true,
+  ),
+)
 ```
 
-will generate the `.o-media--bottom--from-large-when-landscape` class, which will go into
-effect at `(min-width: 64em) and (orientation: landscape)` and will override styles in the default
-class under these  conditions.
+will generate the following classes:
+  - `.o-media--bottom`, which is not limited to any media-query.
+  - `.o-media--bottom--until-medium`, which will be in effect at
+    `(max-width: 37.49em)` and will override styles in the default class
+    until that point.
+  - `.o-media-bottom--from-large-when-landscape`, which will go into effect at
+    `(min-width: 64em) and (orientation: landscape)` and will override styles
+    in the default class under these  conditions.
 
-Regardless of how many times a class is included, or where, it will only be generated once,
-where the `jigsass-objects-media` partial was imported, leaving us with a css file as small
-as possible, and a predictable cascade.
 
 -----
 
