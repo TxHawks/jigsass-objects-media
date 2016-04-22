@@ -312,18 +312,6 @@ desirable.
   ```
 
 
-  #### include with:
-  ```scss
-  @include jigsass-media-obj([$modifier, $from, $until, $misc]);
-  ```
-
-
-  #### Related Mixins:
-  [jigsass-media-obj](#media-obj-mixin): Generates a list abstraction or an abstraction's modifier,
-  optionally limited to a specific breakpoint defined in
-  [$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
-
-
   #### CSS Output
 
   ```scss
@@ -449,18 +437,6 @@ desirable.
   ```
 
 
-  #### include with:
-  ```scss
-  @include jigsass-media-obj(middle[, $from, $until, $misc]);
-  ```
-
-
-  #### Related Mixins:
-  [jigsass-media-obj](#media-obj-mixin): Generates a list abstraction or an abstraction's modifier,
-  optionally limited to a specific breakpoint defined in
-  [$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
-
-
   #### CSS Output
 
   ```scss
@@ -547,18 +523,6 @@ desirable.
     </div>
   </div>
   ```
-
-
-  #### include with:
-  ```scss
-  @include jigsass-media-obj(bottom[, $from, $until, $misc]);
-  ```
-
-
-  #### Related Mixins:
-  [jigsass-media-obj](#media-obj-mixin): Generates a list abstraction or an abstraction's modifier,
-  optionally limited to a specific breakpoint defined in
-  [$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
 
 
   #### CSS Output
@@ -649,18 +613,6 @@ desirable.
     </div>
   </div>
   ```
-
-
-  #### include with:
-  ```scss
-  @include jigsass-media-obj(rev[, $from, $until, $misc]);
-  ```
-
-
-  #### Related Mixins:
-  [jigsass-media-obj](#media-obj-mixin): Generates a list abstraction or an abstraction's modifier,
-  optionally limited to a specific breakpoint defined in
-  [$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
 
 
   #### CSS Output
