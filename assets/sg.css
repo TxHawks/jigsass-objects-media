@@ -1,31 +1,3 @@
-// *************************************
-//
-// # jigsass-objects-media
-// -> A flexbox enabled version of
-//    @Stubbornella's media object
-//
-// *************************************
-
-@charset 'UTF-8';
-
-// -------------------------------------
-// Dependencies
-// -------------------------------------
-
-@if (not mixin-exists(jigsass-object)) {
-  @error '`jigsass-objects-media` has a dependency on `jigsass-tools-selectors`.
-    Please import it.';
-}
-
-
-
-
-
-// -------------------------------------
-// Introduction
-// -------------------------------------
-
-// stylelint-disable
 /* ---
 section: Media object
 title: Introduction
@@ -187,17 +159,6 @@ JigSass Media also offers vertical alignment modifiers ([middle](#middle-aligned
 **License:** MIT
 
 */
-// stylelint-enable
-
-
-
-
-
-// -------------------------------------
-// Variables
-// -------------------------------------
-
-// stylelint-disable
 /* ---
 section: Media Object
 title: CSS Outpout
@@ -271,63 +232,6 @@ $jigsass-media-obj-conf: (
 );
 ```
 */
-// stylelint-enable
-
-/// Configuration map for enabling generation of
-/// media object and modifier classes.
-/// ---
-/// @example
-///		$jigsass-media-obj-conf: (
-///    no-breakpoint: (
-///      no-modifier: true,  // Enables generation of the `.o-media`
-///                          // class outside of any media query.
-///      foo: true,          // Enables generation of the `.o-media--foo`
-///                          // modifier class outside of any media query.
-///    ),
-///    from-<bp-name>: (
-///      no-modifier: true,  // Enables generation of the `.o-media--from-<bp-name>`
-///                          // class inside a min-width media query
-///                          // defined ins `$jigsass-breakpoints.length`.
-///      foo: true,          // Enables generation of the `.o-media--foo--from-<bp-name>`
-///                          // class inside a min-width media query
-///                          // defined ins `$jigsass-breakpoints.length`.
-///    ),
-///    until-<bp-name>: (
-///      no-modifier: true,  // Enables generation of the `.o-media--until-<bp-name>`
-///                          // class inside a max-width media query
-///                          // defined ins `$jigsass-breakpoints.length`.
-///     foo: true,          // Enables generation of the `.o-media--foo--until-<bp-name>`
-///                          // class inside a max-width media query
-///                          // defined ins `$jigsass-breakpoints.length`.
-///    ),
-///    when-<bp-name>: (
-///      no-modifier: true,  // Enables generation of the `.o-media--when-<bp-name>`
-///                          // class inside a misc media query
-///                          // defined ins `$jigsass-breakpoints.features`.
-///      foo: true,          // Enables generation of the `.o-media--foo--when-<bp-name>`
-///                          // class inside a misc media query
-///                          // defined ins `$jigsass-breakpoints.features`.
-///    ),
-///    from-<bp-name>-until-<bp-name>: (...);
-///    from-<bp-name>-when-<bp-name>: (...);
-///    until-<bp-name>-when-<bp-name>: (...);
-///    from-<bp-name>-until-<bp-name>-when-<bp-name>: (...);
-///  );
-/// ---
-/// @type {Map}
-/// ---
-$jigsass-media-obj-conf: (
-  no-breakpoint: (
-    no-modifier: false,
-    middle: false,
-    bottom: false,
-    rev: false,
-  ),
-) !default;
-
-
-
-// stylelint-disable
 /* ---
 section: Media Object
 title: Configuration
@@ -364,124 +268,10 @@ desirable.
 
 **Default:** `'no-flexbox'`
 */
-// stylelint-enable
-
-/// Determines if flexbox should be enabled, where relevant
-/// ---
-/// @type {Boolean}
-/// ---
-$jigsass-media-flexbox: true !default;
-
-/// Determines if flexbox fallback should be included and the qualifier class
-/// to use if so (e.g, `.no-flexbox` when using Modernizr defaults)
-///
-/// Set to `false` to disable fallback altogether, and to a class-name
-/// (sans the leading `.`) used as the qualifier class if fallback is
-/// desirable.
-/// ---
-/// @type {Boolean | String}
-/// ---
-$jigsass-media-flexbox-fallback: 'no-flexbox' !default;
-
-
-// Used internally to store doclets
-$_doclet-store: () !default;
-
-
-
-
-
-// -------------------------------------
-// Functions
-// -------------------------------------
-
-//
-
-
-
-
-
-// -------------------------------------
-// Mixins
-// -------------------------------------
-
-//
-
-
-
-
-
-// -------------------------------------
-// Definitions
-// -------------------------------------
-
-@include jigsass-object(o-media, $jigsass-media-obj-conf) {
-  // A flexbox enabled implementation of Nicole sullivan's
-  // [media object](http://bit.ly/Ku2rqE) with optional fallback
-  // ---
-  // 1. Needs to be clearfixed (`u-cf` class in the HTML)
-  // ---
-  @include jigsass-classname() {
-    @if ($jigsass-media-flexbox) {
-      display: flex;
-
-      > .o-media__content {
-        flex: 1 1 auto;
-      }
-
-      > .o-media__fig {
-        flex-grow: 0;
-        flex-shrink: 0;
-      }
-
-      @if ($jigsass-media-flexbox-fallback) {
-        .#{$jigsass-media-flexbox-fallback} & {
-          @include jigsass-util(u-cf);  // [1]
-
-          display: block;
-
-          > .o-media__fig {
-            @include jigsass-bidi(float, start);
-            display: block;
-
-            img {
-              vertical-align: top;
-            }
-          }
-
-          > .o-media__content {
-            display: table-cell;
-            max-width: 100%;
-            width: 100000px;
-          }
-        }
-      }
-    }
-    @else {
-      @include jigsass-util(u-cf);  // [1]
-
-      display: block;
-
-      > .o-media__fig {
-        @include jigsass-bidi(float, start);
-        display: block;
-
-        img {
-          vertical-align: top;
-        }
-      }
-
-      > .o-media__content {
-        display: table-cell;
-        max-width: 100%;
-        width: 100000px;
-      }
-    }
-
-    $_doclet: $jigsass-obj-name + ($jigsass-obj-modifier or '');
-    @if (not index($_doclet-store, $_doclet)) {
-      $_doclet-store: append($_doclet-store, $_doclet) !global;
-      // stylelint-disable
+.o-media {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
   /* ---
   section: Media Object
   title: Base
@@ -535,20 +325,20 @@ $_doclet-store: () !default;
 
   // When flexbox fallback is enabled
   .u-clearfix { ... }
-  .#{$jigsass-media-flexbox-fallback} .o-media {
+  .no-flexbox .o-media {
     display: block;
   }
 
-  .#{$jigsass-media-flexbox-fallback} .o-media > .o-media__fig {
+  .no-flexbox .o-media > .o-media__fig {
     @include jigsass-bidi(float, start);
     display: block;
   }
 
-  .#{$jigsass-media-flexbox-fallback} .o-media > .o-media__fig img {
+  .no-flexbox .o-media > .o-media__fig img {
     vertical-align: top;
   }
 
-  .#{$jigsass-media-flexbox-fallback} .o-media > .o-media__content {
+  .no-flexbox .o-media > .o-media__content {
     display: table-cell;
     max-width: 100%;
     width: 100000px;
@@ -578,51 +368,45 @@ $_doclet-store: () !default;
   }
   ```
   */
-      //stylelint-enable
-    }
-  }
+}
 
+.o-media > .o-media__content {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+}
 
-  @include jigsass-classname($modifier: middle) {
-    @if ($jigsass-media-flexbox) {
-      align-items: center;
+.o-media > .o-media__fig {
+  -webkit-box-flex: 0;
+      -ms-flex-positive: 0;
+          flex-grow: 0;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+}
 
-      @if ($jigsass-media-flexbox-fallback) {
-        .#{$jigsass-media-flexbox-fallback} & {
-          display: table;
+.no-flexbox .o-media {
+  display: block;
+}
 
-          > .o-media__fig {
-            display: inline-block;
-            float: none;
-          }
+.no-flexbox .o-media > .o-media__fig {
+  float: left;
+  display: block;
+}
 
-          > .o-media__fig,
-          > .o-media-content {
-            vertical-align: middle;
-          }
-        }
-      }
-    }
-    @else {
-      display: table;
+.no-flexbox .o-media > .o-media__fig img {
+  vertical-align: top;
+}
 
-      > .o-media__fig {
-        display: inline-block;
-        float: none;
-      }
+.no-flexbox .o-media > .o-media__content {
+  display: table-cell;
+  max-width: 100%;
+  width: 100000px;
+}
 
-      > .o-media__fig,
-      > .o-media-content {
-        vertical-align: middle;
-      }
-    }
-
-    $_doclet: $jigsass-obj-name + ($jigsass-obj-modifier or '');
-    @if (not index($_doclet-store, $_doclet)) {
-      $_doclet-store: append($_doclet-store, $_doclet) !global;
-
-      // stylelint-disable
-
+.o-media--middle {
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   /* ---
   section: Media Object
   title: Middle Aligned
@@ -664,14 +448,14 @@ $_doclet-store: () !default;
   .o-media--middle { align-items: center; }
 
   // When flexbox fallback is enabled
-  .#{$jigsass-media-flexbox-fallback} .o-media--middle { display: table; }
+  .no-flexbox .o-media--middle { display: table; }
 
-  .#{$jigsass-media-flexbox-fallback} .o-media--middle > .o-media__fig {
+  .no-flexbox .o-media--middle > .o-media__fig {
     display: inline-block;
     float: none;
   }
-  .#{$jigsass-media-flexbox-fallback} .o-media--middle > .o-media__fig,
-  .#{$jigsass-media-flexbox-fallback} .o-media--middle > .o-media__content {
+  .no-flexbox .o-media--middle > .o-media__fig,
+  .no-flexbox .o-media--middle > .o-media__content {
     vertical-align: middle;
   }
 
@@ -689,50 +473,26 @@ $_doclet-store: () !default;
   }
   ```
   */
-      //stylelint-enable
-    }
-  }
+}
 
-  @include jigsass-classname($modifier: bottom) {
-    @if ($jigsass-media-flexbox) {
-      align-items: flex-end;
+.no-flexbox .o-media--middle {
+  display: table;
+}
 
-      @if ($jigsass-media-flexbox-fallback) {
-        .#{$jigsass-media-flexbox-fallback} & {
-          display: table;
+.no-flexbox .o-media--middle > .o-media__fig {
+  display: inline-block;
+  float: none;
+}
 
-          > .o-media__fig {
-            display: inline-block;
-            float: none;
-          }
+.no-flexbox .o-media--middle > .o-media__fig,
+.no-flexbox .o-media--middle > .o-media-content {
+  vertical-align: middle;
+}
 
-          > .o-media__fig,
-          > .o-media-content {
-            vertical-align: bottom;
-          }
-        }
-      }
-    }
-    @else {
-      display: table;
-
-      > .o-media__fig {
-        display: inline-block;
-        float: none;
-      }
-
-      > .o-media__fig,
-      > .o-media-content {
-        vertical-align: bottom;
-      }
-    }
-
-    $_doclet: $jigsass-obj-name + ($jigsass-obj-modifier or '');
-    @if (not index($_doclet-store, $_doclet)) {
-      $_doclet-store: append($_doclet-store, $_doclet) !global;
-
-      // stylelint-disable
-
+.o-media--bottom {
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
   /* ---
   section: Media Object
   title: Bottom Aligned
@@ -774,14 +534,14 @@ $_doclet-store: () !default;
   .o-media--bottom { align-items: flex-end; }
 
   // When flexbox fallback is enabled
-  .#{$jigsass-media-flexbox-fallback} .o-media--bottom { display: table; }
+  .no-flexbox .o-media--bottom { display: table; }
 
-  .#{$jigsass-media-flexbox-fallback} .o-media--bottom > .o-media__fig {
+  .no-flexbox .o-media--bottom > .o-media__fig {
     display: inline-block;
     float: none;
   }
-  .#{$jigsass-media-flexbox-fallback} .o-media--bottom > .o-media__fig,
-  .#{$jigsass-media-flexbox-fallback} .o-media--bottom > .o-media__content {
+  .no-flexbox .o-media--bottom > .o-media__fig,
+  .no-flexbox .o-media--bottom > .o-media__content {
     vertical-align: bottom;
   }
 
@@ -799,54 +559,27 @@ $_doclet-store: () !default;
   }
   ```
   */
-      //stylelint-enable
-    }
-  }
+}
 
+.no-flexbox .o-media--bottom {
+  display: table;
+}
 
-  // A reversed media object
-  // ---
-  // 1. Reverse the container's direction
-  // 2. Restore direction of container's children
-  // ---
-  @include jigsass-classname($modifier: rev) {
-    @if ($jigsass-media-flexbox) {
-      flex-direction: row-reverse;
+.no-flexbox .o-media--bottom > .o-media__fig {
+  display: inline-block;
+  float: none;
+}
 
-      @if ($jigsass-media-flexbox-fallback) {
-        .#{$jigsass-media-flexbox-fallback} & {
-          @if (not mixin-exists(jigsass-bidi)) {
-            @error '`jigsass-objects-media` has a dependency on `jigsass-tools-bidi`.
-            Please import it.';
-          }
+.no-flexbox .o-media--bottom > .o-media__fig,
+.no-flexbox .o-media--bottom > .o-media-content {
+  vertical-align: bottom;
+}
 
-          @include jigsass-bidi(direction, ets);      // [1]
-
-          > * {
-            @include jigsass-bidi(direction, ste);    // [2]
-          }
-        }
-      }
-
-      @else {
-        @if (not mixin-exists(jigsass-bidi)) {
-          @error '`jigsass-objects-media` has a dependency on `jigsass-tools-bidi`.
-          Please import it.';
-        }
-
-        @include jigsass-bidi(direction, ets);      // [1]
-
-        > * {
-          @include jigsass-bidi(direction, ste);    // [2]
-        }
-      }
-    }
-    $_doclet: $jigsass-obj-name + ($jigsass-obj-modifier or '');
-    @if (not index($_doclet-store, $_doclet)) {
-      $_doclet-store: append($_doclet-store, $_doclet) !global;
-
-      // stylelint-disable
-
+.o-media--rev {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+      -ms-flex-direction: row-reverse;
+          flex-direction: row-reverse;
   /* ---
   section: Media Object
   title: Reversed
@@ -890,16 +623,387 @@ $_doclet-store: () !default;
   .o-media--rev { flex-direction: row-reverse; }
 
   // When flexbox fallback is enabled
-  .#{$jigsass-media-flexbox-fallback} .o-media--rev { direction: (ltr|rtl); }
-  .#{$jigsass-media-flexbox-fallback} .o-media--rev > * { direction: (rtl|ltr); }
+  .no-flexbox .o-media--rev { direction: (ltr|rtl); }
+  .no-flexbox .o-media--rev > * { direction: (rtl|ltr); }
 
   // When flexbox is disabled
   .o-media--rev { direction: (ltr|rtl); }
   .o-media--rev > * { direction: (rtl|ltr); }
   ```
   */
+}
 
-      //stylelint-enable
-    }
+.no-flexbox .o-media--rev {
+  direction: rtl;
+}
+
+.no-flexbox .o-media--rev > * {
+  direction: ltr;
+}
+
+@media (min-width: 37.5em) {
+  .o-media--from-medium {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
   }
+  .o-media--from-medium > .o-media__content {
+    -webkit-box-flex: 1;
+        -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+  }
+  .o-media--from-medium > .o-media__fig {
+    -webkit-box-flex: 0;
+        -ms-flex-positive: 0;
+            flex-grow: 0;
+    -ms-flex-negative: 0;
+        flex-shrink: 0;
+  }
+  .no-flexbox .o-media--from-medium {
+    display: block;
+  }
+  .no-flexbox .o-media--from-medium > .o-media__fig {
+    float: left;
+    display: block;
+  }
+  .no-flexbox .o-media--from-medium > .o-media__fig img {
+    vertical-align: top;
+  }
+  .no-flexbox .o-media--from-medium > .o-media__content {
+    display: table-cell;
+    max-width: 100%;
+    width: 100000px;
+  }
+  .o-media--middle--from-medium {
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+  .no-flexbox .o-media--middle--from-medium {
+    display: table;
+  }
+  .no-flexbox .o-media--middle--from-medium > .o-media__fig {
+    display: inline-block;
+    float: none;
+  }
+  .no-flexbox .o-media--middle--from-medium > .o-media__fig,
+  .no-flexbox .o-media--middle--from-medium > .o-media-content {
+    vertical-align: middle;
+  }
+  .o-media--bottom--from-medium {
+    -webkit-box-align: end;
+        -ms-flex-align: end;
+            align-items: flex-end;
+  }
+  .no-flexbox .o-media--bottom--from-medium {
+    display: table;
+  }
+  .no-flexbox .o-media--bottom--from-medium > .o-media__fig {
+    display: inline-block;
+    float: none;
+  }
+  .no-flexbox .o-media--bottom--from-medium > .o-media__fig,
+  .no-flexbox .o-media--bottom--from-medium > .o-media-content {
+    vertical-align: bottom;
+  }
+  .o-media--rev--from-medium {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: reverse;
+        -ms-flex-direction: row-reverse;
+            flex-direction: row-reverse;
+  }
+  .no-flexbox .o-media--rev--from-medium {
+    direction: rtl;
+  }
+  .no-flexbox .o-media--rev--from-medium > * {
+    direction: ltr;
+  }
+}
+
+@media (min-width: 64em) {
+  .o-media--from-large {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+  .o-media--from-large > .o-media__content {
+    -webkit-box-flex: 1;
+        -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+  }
+  .o-media--from-large > .o-media__fig {
+    -webkit-box-flex: 0;
+        -ms-flex-positive: 0;
+            flex-grow: 0;
+    -ms-flex-negative: 0;
+        flex-shrink: 0;
+  }
+  .no-flexbox .o-media--from-large {
+    display: block;
+  }
+  .no-flexbox .o-media--from-large > .o-media__fig {
+    float: left;
+    display: block;
+  }
+  .no-flexbox .o-media--from-large > .o-media__fig img {
+    vertical-align: top;
+  }
+  .no-flexbox .o-media--from-large > .o-media__content {
+    display: table-cell;
+    max-width: 100%;
+    width: 100000px;
+  }
+  .o-media--middle--from-large {
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+  .no-flexbox .o-media--middle--from-large {
+    display: table;
+  }
+  .no-flexbox .o-media--middle--from-large > .o-media__fig {
+    display: inline-block;
+    float: none;
+  }
+  .no-flexbox .o-media--middle--from-large > .o-media__fig,
+  .no-flexbox .o-media--middle--from-large > .o-media-content {
+    vertical-align: middle;
+  }
+  .o-media--bottom--from-large {
+    -webkit-box-align: end;
+        -ms-flex-align: end;
+            align-items: flex-end;
+  }
+  .no-flexbox .o-media--bottom--from-large {
+    display: table;
+  }
+  .no-flexbox .o-media--bottom--from-large > .o-media__fig {
+    display: inline-block;
+    float: none;
+  }
+  .no-flexbox .o-media--bottom--from-large > .o-media__fig,
+  .no-flexbox .o-media--bottom--from-large > .o-media-content {
+    vertical-align: bottom;
+  }
+  .o-media--rev--from-large {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: reverse;
+        -ms-flex-direction: row-reverse;
+            flex-direction: row-reverse;
+  }
+  .no-flexbox .o-media--rev--from-large {
+    direction: rtl;
+  }
+  .no-flexbox .o-media--rev--from-large > * {
+    direction: ltr;
+  }
+}
+
+@media (min-width: 30em) and (max-width: 37.49em) {
+  .o-media--from-small-until-medium {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+  .o-media--from-small-until-medium > .o-media__content {
+    -webkit-box-flex: 1;
+        -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+  }
+  .o-media--from-small-until-medium > .o-media__fig {
+    -webkit-box-flex: 0;
+        -ms-flex-positive: 0;
+            flex-grow: 0;
+    -ms-flex-negative: 0;
+        flex-shrink: 0;
+  }
+  .no-flexbox .o-media--from-small-until-medium {
+    display: block;
+  }
+  .no-flexbox .o-media--from-small-until-medium > .o-media__fig {
+    float: left;
+    display: block;
+  }
+  .no-flexbox .o-media--from-small-until-medium > .o-media__fig img {
+    vertical-align: top;
+  }
+  .no-flexbox .o-media--from-small-until-medium > .o-media__content {
+    display: table-cell;
+    max-width: 100%;
+    width: 100000px;
+  }
+  .o-media--middle--from-small-until-medium {
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+  .no-flexbox .o-media--middle--from-small-until-medium {
+    display: table;
+  }
+  .no-flexbox .o-media--middle--from-small-until-medium > .o-media__fig {
+    display: inline-block;
+    float: none;
+  }
+  .no-flexbox .o-media--middle--from-small-until-medium > .o-media__fig,
+  .no-flexbox .o-media--middle--from-small-until-medium > .o-media-content {
+    vertical-align: middle;
+  }
+  .o-media--bottom--from-small-until-medium {
+    -webkit-box-align: end;
+        -ms-flex-align: end;
+            align-items: flex-end;
+  }
+  .no-flexbox .o-media--bottom--from-small-until-medium {
+    display: table;
+  }
+  .no-flexbox .o-media--bottom--from-small-until-medium > .o-media__fig {
+    display: inline-block;
+    float: none;
+  }
+  .no-flexbox .o-media--bottom--from-small-until-medium > .o-media__fig,
+  .no-flexbox .o-media--bottom--from-small-until-medium > .o-media-content {
+    vertical-align: bottom;
+  }
+  .o-media--rev--from-small-until-medium {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: reverse;
+        -ms-flex-direction: row-reverse;
+            flex-direction: row-reverse;
+  }
+  .no-flexbox .o-media--rev--from-small-until-medium {
+    direction: rtl;
+  }
+  .no-flexbox .o-media--rev--from-small-until-medium > * {
+    direction: ltr;
+  }
+}
+
+/* ---
+section: Clearfix Util
+title: Introduction
+order: -10
+---
+Force an element to clear its floated child element and
+prevent its layout from collapsing.
+
+#### Installation
+
+Using npm:
+
+```sh
+npm i -S jigsass-utils-clearfix
+```
+
+#### Usage
+Import JigSass Utils Clearfix into your main scss file near its very end, together with all
+other utilities (utilities should always be the last to be imported).
+
+```scss
+@import 'path/to/jigsass-utils-clearfix/scss/index';
+```
+
+Importing the file will not create any styles by itself. You would need to indicate that the
+`.u-cf` class should actually be generated in each component or object it is used in:
+
+```scss
+// _c.foo.scss
+.foo {
+  @include jigsass-util(u-cf);
+
+  ...
+}
+```
+
+```scss
+// _c.bar.scss
+.bar {
+  @include jigsass-util(u-cf);
+
+  ...
+}
+```
+
+```scss
+// _c.baz.scss
+.baz {
+  @include jigsass-util(u-cf);
+
+  ...
+}
+```
+
+Doing so helps us a great deal with portability, as no matter where we import component or object
+partials, the correct utility classes will be generated. Think of it as a poor man's dependency
+management.
+
+Developer communication is also assisted by including "dependencies" wherever they are required,
+as anyone going through a partial, can easily understand how it should be marked up with just a
+glance.
+
+As far as bloat goes, just don't worry about it - the actual styles will only be generated once,
+at the location in the cascade where the Jigsass Clearfix partial was imported into the main file:
+*/
+.u-cf:after {
+  clear: both;
+  content: '';
+  display: block;
+}
+
+html {
+  font-size: 37.5%;
+}
+
+body {
+  font-size: 2.6666666667em;
+  line-height: 4rem;
+}
+
+html {
+  font-family: sans-serif;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+figure,
+p {
+  margin: 0;
+}
+
+.fpo {
+  background-color: #09a5d9;
+  box-sizing: border-box;
+  color: #fff;
+  margin: 0;
+  width: 100%;
+}
+
+.fpo--b {
+  background-color: #0892c1;
+}
+
+.fpo--c {
+  background-color: #0780a8;
+}
+
+.fpo--d {
+  background-color: #427ea1;
+}
+
+.fpo--fig {
+  height: 126px;
+  font-weight: 700;
+  line-height: 126px;
+  text-align: center;
+  width: 126px;
+}
+
+.fpo--fig:before {
+  content: 'o-media-fig';
+}
+
+.o-media__content > * + * {
+  margin-top: 4rem;
 }
