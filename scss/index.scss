@@ -429,6 +429,11 @@ $_doclet-store: () !default;
         flex: 1 1 auto;
       }
 
+      > .o-media__fig {
+        flex-grow: 0;
+        flex-shrink: 0;
+      }
+
       @if ($jigsass-media-flexbox-fallback) {
         .#{$jigsass-media-flexbox-fallback} & {
           @include jigsass-util(u-cf);  // [1]

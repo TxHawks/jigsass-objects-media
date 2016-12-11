@@ -57,6 +57,20 @@
 	
 				</li>
 				
+				<li>
+					<a href="#clearfix-util"><span>Clearfix Util</span></a>
+					
+	<ul>
+		
+				<li>
+					<a href="#introduction"><span>Introduction</span></a>
+					
+				</li>
+				
+	</ul>
+	
+				</li>
+				
 	</ul>
 	
 	</nav>
@@ -541,7 +555,65 @@ desirable.</p>
 			</div>
 		</section>
 		
-	<footer>Last modified Friday, 22 April 2016 18:36</footer>
+		<section id="clearfix-util">
+			<h2>Clearfix Util</h2>
+			<div>
+				
+				
+		<section id="introduction">
+			<h3>Introduction</h3>
+			<div>
+				<p>Force an element to clear its floated child element and
+prevent its layout from collapsing.</p>
+<h4 id="installation">Installation</h4>
+<p>Using npm:</p>
+<pre><code class="lang-sh">npm i -S jigsass-utils-clearfix
+</code></pre>
+<h4 id="usage">Usage</h4>
+<p>Import JigSass Utils Clearfix into your main scss file near its very end, together with all
+other utilities (utilities should always be the last to be imported).</p>
+<pre><code class="lang-scss">@import &#39;path/to/jigsass-utils-clearfix/scss/index&#39;;
+</code></pre>
+<p>Importing the file will not create any styles by itself. You would need to indicate that the
+<code>.u-cf</code> class should actually be generated in each component or object it is used in:</p>
+<pre><code class="lang-scss">// _c.foo.scss
+.foo {
+  @include jigsass-util(u-cf);
+
+  ...
+}
+</code></pre>
+<pre><code class="lang-scss">// _c.bar.scss
+.bar {
+  @include jigsass-util(u-cf);
+
+  ...
+}
+</code></pre>
+<pre><code class="lang-scss">// _c.baz.scss
+.baz {
+  @include jigsass-util(u-cf);
+
+  ...
+}
+</code></pre>
+<p>Doing so helps us a great deal with portability, as no matter where we import component or object
+partials, the correct utility classes will be generated. Think of it as a poor man&#39;s dependency
+management.</p>
+<p>Developer communication is also assisted by including &quot;dependencies&quot; wherever they are required,
+as anyone going through a partial, can easily understand how it should be marked up with just a
+glance.</p>
+<p>As far as bloat goes, just don&#39;t worry about it - the actual styles will only be generated once,
+at the location in the cascade where the Jigsass Clearfix partial was imported into the main file:</p>
+
+				
+			</div>
+		</section>
+		
+			</div>
+		</section>
+		
+	<footer>Last modified Sunday, 11 December 2016 14:21</footer>
 </main>
 <script src="prism.js"></script>
 <script src="examples.js"></script>
